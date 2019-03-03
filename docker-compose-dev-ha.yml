@@ -1,0 +1,64 @@
+version: '3'
+services:
+  db-service:
+    image: pantsoft.de:5000/postgres:latest
+    restart: always
+    volumes:
+      - ./volumes/dev-ha/db-service:/var/postgres/data
+    environment:
+      - POSTGRES_USER=service
+      - POSTGRES_PASSWORD=service
+      - POSTGRES_DB=service
+      - PGDATA=/var/postgres/data/pgdata
+    ports:
+      - 5432
+
+  wildfly-001:
+    image: pantsoft.de:5000/wildfly-dev-ha:latest
+    hostname: wildfly-001
+    restart: always
+    volumes:
+      - ./volumes/dev-ha/wildfly-001/log:/opt/jboss/wildfly/standalone/log
+      - ./volumes/dev-ha/wildfly-001/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.1
+    ports:
+      - 9990:9990
+      - 8080:8080
+      - 8787:8787
+
+  wildfly-002:
+    image: pantsoft.de:5000/wildfly-dev-ha:latest
+    hostname: wildfly-002
+    restart: always
+    volumes:
+     - ./volumes/dev-ha/wildfly-002/log:/opt/jboss/wildfly/standalone/log
+     - ./volumes/dev-ha/wildfly-002/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.2
+    ports:
+      - 9991:9990
+      - 8081:8080
+      - 8788:8787
+
+  wildfly-003:
+    image: pantsoft.de:5000/wildfly-dev-ha:latest
+    hostname: wildfly-003
+    restart: always
+    volumes:
+     - ./volumes/dev-ha/wildfly-003/log:/opt/jboss/wildfly/standalone/log
+     - ./volumes/dev-ha/wildfly-003/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.3
+    ports:
+      - 9992:9990
+      - 8082:8080
+      - 8789:8787
+
+  pgadmin:
+    image: pantsoft.de:5000/pgadmin:latest
+    restart: always
+    volumes:
+      - ./volumes/dev-ha/pgadmin:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=developer
+      - PGADMIN_DEFAULT_PASSWORD=developer
+    ports:
+      - 4080:80
