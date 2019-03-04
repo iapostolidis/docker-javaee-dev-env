@@ -11,7 +11,7 @@ services:
       - POSTGRES_DB=service
       - PGDATA=/var/postgres/data/pgdata
     ports:
-      - 5432
+      - 5432:5432
 
   wildfly-001:
     image: pantsoft.de:5000/wildfly-dev-ha:latest
