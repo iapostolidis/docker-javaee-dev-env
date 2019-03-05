@@ -1,4 +1,4 @@
-FROM postgres:11.2
+FROM postgres:10
 LABEL maintainer="Ioannis Apostolidis"
 
 # use custom script to initialize database
