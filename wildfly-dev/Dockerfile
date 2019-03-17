@@ -7,7 +7,6 @@ RUN tar -xf /tmp/dcevm.tar.gz dcevm-11.0.1+8/lib/server/libjvm.so
 
 USER root
 RUN cp dcevm-11.0.1+8/lib/server/libjvm.so /etc/alternatives/java_sdk/lib/server/
-USER jboss
 
 # Download PostgreSQL JDBC Driver
 RUN curl -o /tmp/psql-jdbc.jar https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
@@ -27,10 +26,10 @@ ADD batch_undertow_cors_filters.cli /tmp/
 USER root
 RUN chmod +x /tmp/config.sh
 RUN /tmp/config.sh
-RUN chown -R jboss:0 /opt/jboss/wildfly/standalone
+RUN chown -R 1001:0 /opt/jboss/wildfly && \
+    chmod -R ug+rwX /opt/jboss/wildfly
 
-
-USER jboss
+USER 1001
 
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-c", "standalone.xml", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--debug", "*:8787"]
 
