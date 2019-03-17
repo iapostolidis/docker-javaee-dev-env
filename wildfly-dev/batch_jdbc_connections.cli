@@ -6,7 +6,7 @@ batch
 
 # service connection
 data-source add --name=ServiceDS --jndi-name=java:jboss/datasources/ServiceDS --driver-name=${env.DB_DRIVER_NAME:postgresql} --statistics-enabled=true \
---connection-url=${env.DB_CONNECTION_URL:jdbc:postgresql://db-service/service?currentSchema=service} --user-name=service --password=service \
+--connection-url=${env.DB_CONNECTION_URL:jdbc:postgresql://db-service/service?currentSchema=service} --user-name=${env.DB_USERNAME:service} --password=${env.DB_PASSWORD:service} \
 --initial-pool-size=5 --min-pool-size=5 --max-pool-size=25 --pool-prefill=true --flush-strategy=FailingConnectionOnly
 
 run-batch

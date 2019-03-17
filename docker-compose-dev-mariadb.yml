@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db-service:
+    image: mariadb:10.2
+    restart: always
+    volumes:
+      - ./volumes/dev-mariadb/db-service:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=service
+      - MYSQL_USER=service
+      - MYSQL_PASSWORD=service
+      - MYSQL_ROOT_PASSWORD=service
+    ports:
+      - 3306
+
+  wildfly-001:
+    image: pantsoft.de:5000/wildfly-dev:latest
+    restart: always
+    volumes:
+      - ./volumes/dev-mariadb/wildfly/log:/opt/jboss/wildfly/standalone/log
+      - ./volumes/dev-mariadb/wildfly/deployments:/opt/jboss/wildfly/standalone/deployments
+    environment:
+      - DB_DRIVER_NAME=mariadb
+      - DB_CONNECTION_URL=jdbc:mariadb://db-service/service?useUnicode=yes&characterEncoding=UTF-8
+    ports:
+      - 9990:9990
+      - 8080:8080
+      - 8787:8787

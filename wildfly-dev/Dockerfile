@@ -11,6 +11,9 @@ RUN cp dcevm-11.0.1+8/lib/server/libjvm.so /etc/alternatives/java_sdk/lib/server
 # Download PostgreSQL JDBC Driver
 RUN curl -o /tmp/psql-jdbc.jar https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
 
+# Download MariaDB JDBC Driver
+RUN curl -o /tmp/mariadb-jdbc.jar http://downloads.mariadb.com/Connectors/java/connector-java-2.4.0/mariadb-java-client-2.4.0.jar
+
 # Setup administrator user
 RUN /opt/jboss/wildfly/bin/add-user.sh admin Admin#007 --silent
 

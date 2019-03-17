@@ -4,4 +4,8 @@ batch
 module add --name=org.postgresql --resources=/tmp/psql-jdbc.jar --dependencies=javax.api,javax.transaction.api
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
 
+# add mysql driver
+module add --name=org.mariadb --resources=/tmp/mariadb-jdbc.jar --dependencies=javax.api,javax.transaction.api
+/subsystem=datasources/jdbc-driver=mariadb:add(driver-name=mariadb,driver-module-name=org.mariadb,driver-xa-datasource-class-name=org.mariadb.jdbc.MariaDbDataSource)
+
 run-batch
