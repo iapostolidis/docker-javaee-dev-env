@@ -5,7 +5,7 @@ batch
 /subsystem=ee/service=default-bindings:write-attribute(name=datasource,value=undefined)
 
 # service connection
-data-source add --name=ServiceDS --jndi-name=java:jboss/datasources/ServiceDS --driver-name=postgresql --statistics-enabled=true \
+data-source add --name=ServiceDS --jndi-name=java:jboss/datasources/ServiceDS --driver-name=${env.DB_DRIVER_NAME:postgresql} --statistics-enabled=true \
 --connection-url=${env.DB_CONNECTION_URL:jdbc:postgresql://db-service/service?currentSchema=service} --user-name=service --password=service \
 --initial-pool-size=5 --min-pool-size=5 --max-pool-size=25 --pool-prefill=true --flush-strategy=FailingConnectionOnly
 
