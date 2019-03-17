@@ -4,7 +4,7 @@ services:
     image: mariadb:10.2
     restart: always
     volumes:
-      - ./volumes/dev-mariadb/db-service:/var/lib/mysql
+      - MARIADB_DATA:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=service
       - MYSQL_USER=service
@@ -26,3 +26,6 @@ services:
       - 9990:9990
       - 8080:8080
       - 8787:8787
+
+volumes:
+        MARIADB_DATA:
