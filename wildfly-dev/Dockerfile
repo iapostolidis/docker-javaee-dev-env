@@ -29,10 +29,10 @@ ADD batch_undertow_cors_filters.cli /tmp/
 USER root
 RUN chmod +x /tmp/config.sh
 RUN /tmp/config.sh
-RUN chown -R 1001:0 /opt/jboss/wildfly && \
+RUN chown -R jboss:0 /opt/jboss/wildfly && \
     chmod -R ug+rwX /opt/jboss/wildfly
 
-USER 1001
+USER jboss
 
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-c", "standalone.xml", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--debug", "*:8787"]
 
