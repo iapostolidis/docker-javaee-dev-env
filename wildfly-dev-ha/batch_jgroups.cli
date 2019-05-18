@@ -1,0 +1,8 @@
+batch
+
+# Add remote destinations
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=wildfly-001:add(host=wildfly-001,port=7600)
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=wildfly-002:add(host=wildfly-002,port=7600)
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=wildfly-003:add(host=wildfly-003,port=7600)
+
+run-batch

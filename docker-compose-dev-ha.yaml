@@ -1,7 +1,55 @@
 version: '3'
 services:
+  wildfly-001:
+    build: ./wildfly-dev-ha
+    hostname: wildfly-001
+    restart: always
+    volumes:
+      - ./volumes/dev-ha/wildfly-001/log:/opt/jboss/wildfly/standalone/log
+      - ./volumes/dev-ha/wildfly-001/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.1
+    networks:
+      dev-ha:
+        ipv4_address: 172.28.5.1
+    ports:
+      - 9990:9990
+      - 8080:8080
+      - 8787:8787
+
+  wildfly-002:
+    build: ./wildfly-dev-ha
+    hostname: wildfly-002
+    restart: always
+    volumes:
+     - ./volumes/dev-ha/wildfly-002/log:/opt/jboss/wildfly/standalone/log
+     - ./volumes/dev-ha/wildfly-002/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.2
+    networks:
+      dev-ha:
+        ipv4_address: 172.28.5.2
+    ports:
+      - 9991:9990
+      - 8081:8080
+      - 8788:8787
+
+  wildfly-003:
+    build: ./wildfly-dev-ha
+    hostname: wildfly-003
+    restart: always
+    volumes:
+     - ./volumes/dev-ha/wildfly-003/log:/opt/jboss/wildfly/standalone/log
+     - ./volumes/dev-ha/wildfly-003/deployments:/opt/jboss/wildfly/standalone/deployments
+    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.3
+    networks:
+      dev-ha:
+        ipv4_address: 172.28.5.3
+    ports:
+      - 9992:9990
+      - 8082:8080
+      - 8789:8787
+
   db-service:
-    image: pantsoft.de:5000/postgres:latest
+    build: ./postgres 
     restart: always
     volumes:
       - ./volumes/dev-ha/db-service:/var/postgres/data
@@ -10,55 +58,30 @@ services:
       - POSTGRES_PASSWORD=service
       - POSTGRES_DB=service
       - PGDATA=/var/postgres/data/pgdata
+    networks:
+      dev-ha:
+        ipv4_address: 172.28.5.20
     ports:
       - 5432:5432
 
-  wildfly-001:
-    image: pantsoft.de:5000/wildfly-dev-ha:latest
-    hostname: wildfly-001
-    restart: always
-    volumes:
-      - ./volumes/dev-ha/wildfly-001/log:/opt/jboss/wildfly/standalone/log
-      - ./volumes/dev-ha/wildfly-001/deployments:/opt/jboss/wildfly/standalone/deployments
-    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.1
-    ports:
-      - 9990:9990
-      - 8080:8080
-      - 8787:8787
-
-  wildfly-002:
-    image: pantsoft.de:5000/wildfly-dev-ha:latest
-    hostname: wildfly-002
-    restart: always
-    volumes:
-     - ./volumes/dev-ha/wildfly-002/log:/opt/jboss/wildfly/standalone/log
-     - ./volumes/dev-ha/wildfly-002/deployments:/opt/jboss/wildfly/standalone/deployments
-    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.2
-    ports:
-      - 9991:9990
-      - 8081:8080
-      - 8788:8787
-
-  wildfly-003:
-    image: pantsoft.de:5000/wildfly-dev-ha:latest
-    hostname: wildfly-003
-    restart: always
-    volumes:
-     - ./volumes/dev-ha/wildfly-003/log:/opt/jboss/wildfly/standalone/log
-     - ./volumes/dev-ha/wildfly-003/deployments:/opt/jboss/wildfly/standalone/deployments
-    command: /opt/jboss/wildfly/bin/standalone.sh -c standalone-ha.xml --debug 8787 -b 0.0.0.0 -bmanagement 0.0.0.0 -u 230.0.0.4 -Djboss.bind.address.private=172.28.5.3
-    ports:
-      - 9992:9990
-      - 8082:8080
-      - 8789:8787
-
   pgadmin:
-    image: pantsoft.de:5000/pgadmin:latest
+    image: dpage/pgadmin4:latest
     restart: always
     volumes:
       - ./volumes/dev-ha/pgadmin:/var/lib/pgadmin
     environment:
       - PGADMIN_DEFAULT_EMAIL=developer
       - PGADMIN_DEFAULT_PASSWORD=developer
+    networks:
+      dev-ha:
+        ipv4_address: 172.28.5.30
     ports:
       - 4080:80
+
+networks:
+  dev-ha:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

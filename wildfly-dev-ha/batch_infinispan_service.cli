@@ -1,0 +1,20 @@
+batch
+
+# add cache container
+/subsystem=infinispan/cache-container=service:add()
+/subsystem=infinispan/cache-container=service:write-attribute(name=default-cache, value=sample)
+/subsystem=infinispan/cache-container=service:write-attribute(name=statistics-enabled, value=true)
+
+# set the transport channel for cache container
+/subsystem=jgroups/channel=ch67:add(cluster=ch67_dev, module=org.wildfly.clustering.server, stack=tcp, statistics-enabled=true, stats-enabled=true)
+/subsystem=infinispan/cache-container=service/transport=jgroups:add(channel=ch67)
+
+# Add the cache
+/subsystem=infinispan/cache-container=service/replicated-cache=sample:add()
+/subsystem=infinispan/cache-container=service/replicated-cache=sample:write-attribute(name=statistics-enabled, value=true)
+/subsystem=infinispan/cache-container=service/replicated-cache=sample/store=file:add(fetch-state=false, max-batch-size=100, passivation=true, preload=false, purge=true, relative-to=jboss.server.data.dir, shared=false)
+/subsystem=infinispan/cache-container=service/replicated-cache=sample/component=transaction:add(mode=FULL_XA, locking=PESSIMISTIC, stop-timeout=60000)
+#/subsystem=infinispan/cache-container=service/replicated-cache=sample/component=locking:add(isolation=REPEATABLE_READ, striping=true)
+/subsystem=infinispan/cache-container=service/replicated-cache=sample/component=state-transfer:add(chunk-size=512, timeout=60000)
+
+run-batch
